@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma.schema
+
+model User {
+  id                  Int               @id @default(autoincrement())
+  email               String?           @unique
+  firstName           String?
+  lastName            String?
+  userName            String?
+  avatar              String?
+  dob                 DateTime?
+  phoneNumber         String?
+  country             String?
+  city                String?
+  password            String            @default("")
+  deviceId            String            @default("")
+  resetToken          String            @default("")
+  type                UserType?             @default(User)
+  status              Boolean           @default(true)
+  stripeCustomerId    String            @default("")
+  isVerified          Boolean           @default(false)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  fcmToken            String?
+  providerId          String            @default("")
+  registrationType    String            @default("emailpassword")
+  settings    Json  @default("{}")
+  social    Json  @default("{}")
+  RoomMember          RoomMember[]
+  NotificationSend    Notification[]    @relation("senderNotification")
+  NotificationReceive Notification[]    @relation("receiverNotification")
+  ConversionSend      Conversion[]      @relation("senderConversion")
+  ConversionReceive   Conversion[]      @relation("receiverConversion")
+  Conversion          Conversion[]      @relation("recieverConversion")
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @unique
+  token     String   @default("")
+  createdAt DateTime @default(now())
+}
+
+enum UserType {
+  User
+  Seller
+  Vendor
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  name      String
+  cities    City[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model City {
+  id        Int      @id @default(autoincrement())
+  countryId Int
+  country   Country  @relation(fields: [countryId], references: [id])
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model ChatRoom {
+  id         Int          @id @unique @default(autoincrement())
+  title      String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  roomMember RoomMember[] @relation("chatRoomMember")
+  conversion Conversion[] @relation("chatRoomConversion")
+
+}
+
+model RoomMember {
+  id        Int       @id @unique @default(autoincrement())
+  roomId    Int?
+  chatRoom  ChatRoom? @relation("chatRoomMember", fields: [roomId], references: [id])
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Conversion {
+  id         Int         @id @unique @default(autoincrement())
+  roomId     Int
+  chatRoom   ChatRoom    @relation("chatRoomConversion", fields: [roomId], references: [id])
+  senderId   Int
+  recieverId Int
+  sender     User        @relation("senderConversion", fields: [senderId], references: [id])
+  reciever   User        @relation("recieverConversion", fields: [recieverId], references: [id])
+  message    String?
+  media      RoomMedia[]
+  type       MessageType
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  User       User?       @relation("receiverConversion", fields: [userId], references: [id])
+  userId     Int?
+}
+
+enum MessageType {
+  text
+  images
+  voice
+}
+
+model RoomMedia {
+  id           Int         @id @default(autoincrement())
+  asset        String
+  type         String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  Conversion   Conversion? @relation(fields: [conversionId], references: [id])
+  conversionId Int?
+}
+
+
+model Notification {
+  id         Int      @id @unique @default(autoincrement())
+  senderId   Int
+  sender     User     @relation("senderNotification", fields: [senderId], references: [id])
+  receiverId Int
+  receiver   User     @relation("receiverNotification", fields: [receiverId], references: [id])
+  type       String
+  typeId     Int
+  message    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+

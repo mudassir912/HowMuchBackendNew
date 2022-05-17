@@ -1,0 +1,134 @@
+scalar Date
+
+# schema.graphql
+type User {
+  id: Int
+  email: String
+  firstName: String
+  lastName: String
+  avatar: String
+  dob: Date
+  phoneNumber: String
+  country: String
+  city: String
+  password: String
+  deviceId: String
+  resetToken: String
+  type: Type
+  status: Boolean
+  stripeCustomerId: String
+  isVerified: Boolean
+  createdAt: Date
+  updatedAt: Date
+  fcmToken: String
+  providerId: String
+  registrationType: String
+  deletedAt: Date
+  Business: Business
+}
+
+
+type Business {
+  id: Int
+  userId: Int
+  user: User
+  followers: Follow
+  businessName: String
+  description: String
+  address: String
+  status: Boolean
+  category: String
+  subCategory: String
+  createdAt: Date
+  updatedAt: Date
+  deletedAt: Date
+}
+
+type Package {
+  id: Int
+  name: String
+  photos: Int
+  video: Int
+  story: Int
+  status: Int
+  duration: Int
+  price: Float
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type Token {
+  id: Int
+  userId: Int
+  token: String
+  createdAt: Date
+}
+
+type UserResponse {
+  status: Boolean,
+  message: String
+  data: User,
+  error: String,
+}
+
+type UserArrayResponse {
+  status: Boolean,
+  message: String
+  data: [User],
+}
+
+
+type SinglePostResponse {
+  status: Boolean,
+  message: String
+  data: User,
+  error: String,
+}
+
+
+type Query {
+  getAllUsers: UserArrayResponse
+  loginUser(email: String, password: String): UserResponse
+  getAllPost(email: String, password: String): UserResponse
+  singlePost(email: String, password: String): UserResponse
+}
+
+type Mutation {
+  createUser(
+  id: Int
+    email: String
+    firstName: String
+    lastName: String
+    avatar: String
+    dob: Date
+    phoneNumber: String
+    country: String
+    city: String
+    password: String
+    deviceId: String
+    resetToken: String
+    type: Type
+    status: Boolean
+    stripeCustomerId: String
+    isVerified: Boolean
+    createdAt: Date
+    updatedAt: Date
+    fcmToken: String
+    providerId: String
+    registrationType: String
+    deletedAt: Date
+     ): UserResponse
+
+  changePassword(id: Int!, currentPassword: String!, newPassword: String!): UserResponse
+  deleteUser(id: Int!): UserArrayResponse
+  verifyOtp(token: String!, email: String!): UserResponse
+  resendOtp(email: String!): UserResponse
+}
+
+
+
+enum Type {
+  Customer
+  Business
+}
