@@ -56,16 +56,12 @@ const ProductServices = {
 
 
 
-   const Raw = await prisma.$queryRaw`SELECT * FROM "City"`;
+ /*  const Raw = await prisma.$queryRaw`SELECT * FROM "City"`;
    const Raws = await prisma.city.findMany({
      where : {
        id : 1
      }
-   });
-
-   console.log({Raw});
-  console.log({Raws});
-
+   });*/
 
 
     const pagination = requestPagination(cursor);

@@ -1,7 +1,7 @@
 const relations = {
     user(req = {}) {
         return {
-            product: true
+            products: true
         };
     },
     productCategory(req = {}) {
