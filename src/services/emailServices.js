@@ -9,7 +9,7 @@ const SendMail = (toUser, otp) => {
         secure: true,
         auth: {
           user: "development@appstirr.com", // Your email id
-          pass: "7#FDGn@+P-", // Your password
+          pass: "Wg@rW6#@Z&", // Your password
         },
     })
 

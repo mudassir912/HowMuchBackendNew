@@ -44,11 +44,10 @@ model User {
   ConversionReceive   Conversion[]      @relation("receiverConversion")
   Conversion          Conversion[]      @relation("recieverConversion")
   products               Product[]
-  bids               ProductBid[] @relation("UserBidRelation")
+  services               Service[]
+  bidsProduct               ProductBid[] @relation("UserProductBidRelation")
+  bidsService               ServiceBid[] @relation("UserServiceBidRelation")
 }
-
-
-
 
 
 model Product {
@@ -83,7 +82,7 @@ model ProductBid {
   productId Int
   userId     Int
   product   Product @relation("ProductBidRelation", fields: [productId], references: [id])
-  user       User     @relation("UserBidRelation", fields: [userId], references: [id])
+  user       User     @relation("UserProductBidRelation", fields: [userId], references: [id])
   amount     Float
   status     ProductBidStatus @default(Pending)
   createdAt  DateTime @default(now())
@@ -101,8 +100,8 @@ model ProductCategory {
   id        Int       @id @default(autoincrement())
   title     String    @default("")
   parentId       Int?       @default(0)
-  parentCategory ProductCategory?  @relation("parentCategory", fields: [parentId], references: [id])
-  child          ProductCategory[] @relation("parentCategory")
+  parentCategory ProductCategory?  @relation("parentProductCategory", fields: [parentId], references: [id])
+  child          ProductCategory[] @relation("parentProductCategory")
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   product   Product[] @relation("productCategory")
@@ -119,16 +118,72 @@ model ProductMedia {
 }
 
 
+
 model Service {
   id        Int      @id @default(autoincrement())
-  userId    Int?     @unique
-  productCategoryId    Int?
+  userId    Int?
+  serviceCategoryId    Int?
+  title     String   @default("")
+  locationTitle     String   @default("")
   description     String   @default("")
-  location     String   @default("")
-  image    Json
+  lat     Float    @default(0)
+  lng     Float   @default(0)
+  media          ServiceMedia[]
   videoEnable          Boolean           @default(false)
   price          Float
+  status          ServiceStatus @default(BidOpen)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  serviceCategory   ServiceCategory? @relation("serviceCategory", fields: [serviceCategoryId], references: [id])
+  user           User?           @relation(fields: [userId], references: [id])
+  bids    ServiceBid[]  @relation("ServiceBidRelation")
+  isBid     ServiceBid[]  @relation("isServiceBid")
+}
+
+enum ServiceStatus {
+  BidOpen
+  BidClose
+  Sold
+}
+
+model ServiceBid {
+  id         Int      @id @default(autoincrement())
+  serviceId Int
+  userId     Int
+  service   Service @relation("ServiceBidRelation", fields: [serviceId], references: [id])
+  user       User     @relation("UserServiceBidRelation", fields: [userId], references: [id])
+  amount     Float
+  status     ServiceBidStatus @default(Pending)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  bidService   Service @relation("isServiceBid", fields: [serviceId], references: [id], map: "isServiceBid_Foreign_Key_Constraint")
+}
+
+enum ServiceBidStatus {
+  Pending
+  Accepted
+  Rejected
+}
+
+model ServiceCategory {
+  id        Int       @id @default(autoincrement())
+  title     String    @default("")
+  parentId       Int?       @default(0)
+  parentCategory ServiceCategory?  @relation("parentServiceCategory", fields: [parentId], references: [id])
+  child          ServiceCategory[] @relation("parentServiceCategory")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  service   Service[] @relation("serviceCategory")
+}
+
+model ServiceMedia {
+  id        Int      @id @default(autoincrement())
+   serviceId    Int
+   service       Service     @relation(fields: [serviceId], references: [id])
+  asset     String
+  type      String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 

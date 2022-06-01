@@ -26,7 +26,7 @@ const ProductBid = gql`
   }
   
   type User {
-     bids: [ProductBid]
+     bidsProduct: [ProductBid]
   }
    
 
