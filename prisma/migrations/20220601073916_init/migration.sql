@@ -10,9 +10,6 @@ CREATE TYPE "UserType" AS ENUM ('User', 'Seller', 'Vendor');
 -- CreateEnum
 CREATE TYPE "MessageType" AS ENUM ('text', 'images', 'voice');
 
--- AlterTable
-ALTER TABLE "City" ADD COLUMN     "countryId" INTEGER;
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -131,6 +128,17 @@ CREATE TABLE "Country" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Country_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "City" (
+    "id" SERIAL NOT NULL,
+    "countryId" INTEGER,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "City_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
