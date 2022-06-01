@@ -31,16 +31,27 @@ const Custom = gql`
   value: String
   }
   
+  input AdminPaginationInput {
+    skip: Int
+    page: Int
+  }
+
+  type AdminPaginationResponse {
+    total: Int
+    hasNextPage: Boolean
+    hasPreviousPage: Boolean
+  }
+
   input PaginationInput {
-  page : Int
-  perPage : Int
+    limit: Int
+    cursor: Int
   }
-  
+
   type PaginationResponse {
-  total : Int
-  currentPage : Int
-  perPage : Int
+    nextCursor: Int
   }
+
+
   
   
   type Country{
@@ -131,9 +142,9 @@ input whereCategoryInput {
     addCity(name : String, countryId : Int): CityResponse
     updateCity(id : Int, name:String): CityResponse
     deleteCity(id : Int): CityResponse
-    addCategory(name : String, parentId : Int): CategoryResponse
-    updateCategory(id : Int, name:String): CategoryResponse
-    deleteCategory(id : Int): CategoryResponse
+   # addCategory(name : String, parentId : Int): CategoryResponse
+   # updateCategory(id : Int, name:String): CategoryResponse
+  #  deleteCategory(id : Int): CategoryResponse
   }
   
 `;

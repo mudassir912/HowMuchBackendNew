@@ -14,19 +14,19 @@ const CustomResolver = {
             }
 
         },
-        getCategories: async (args, req, context) => {
+        /*  getCategories: async (args, req, context) => {
 
-            try {
+              try {
 
-                const responseData = await CustomServices.getCategories(req);
+                  const responseData = await CustomServices.getCategories(req);
 
-                return responseData;
-            } catch (error) {
-                return createError(401, error);
-            }
+                  return responseData;
+              } catch (error) {
+                  return createError(401, error);
+              }
 
-        }
-
+          }
+  */
     },
     Mutation: {
 
@@ -101,46 +101,47 @@ const CustomResolver = {
         },
 
 
-        addCategory: async (args, req, context) => {
+        /*
+              addCategory: async (args, req, context) => {
 
-            try {
-                const responseData = await CustomServices.addCategory(req);
+                  try {
+                      const responseData = await CustomServices.addCategory(req);
 
-                return responseData;
-            } catch (error) {
-                return createError(401, error);
-            }
+                      return responseData;
+                  } catch (error) {
+                      return createError(401, error);
+                  }
 
-        },
-        updateCategory: async (args, req, context) => {
+              },
+              updateCategory: async (args, req, context) => {
 
-            try {
-                const responseData = await CustomServices.updateCategory(req);
+                  try {
+                      const responseData = await CustomServices.updateCategory(req);
 
-                return responseData;
-            } catch (error) {
-                return createError(401, error);
-            }
+                      return responseData;
+                  } catch (error) {
+                      return createError(401, error);
+                  }
 
-        },
-        deleteCategory: async (args, req, context) => {
+              },
+              deleteCategory: async (args, req, context) => {
 
 
-            try {
-                const responseData = await CustomServices.deleteCategory(req);
+                  try {
+                      const responseData = await CustomServices.deleteCategory(req);
 
-                return responseData;
-            } catch (error) {
-                return createError(401, error);
-            }
+                      return responseData;
+                  } catch (error) {
+                      return createError(401, error);
+                  }
 
-        },
-
+              },
+      */
 
     }
-  }
+}
 
-  module.exports = {
-      CustomResolver
-  }
+module.exports = {
+    CustomResolver
+}
 

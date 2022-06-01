@@ -1,6 +1,27 @@
 const relations = {
     user(req = {}) {
-        return {}
+        return {
+            product: true
+        };
+    },
+    productCategory(req = {}) {
+        return {
+            product: true,
+            child: true,
+        };
+    },
+    product(req = {}) {
+        return {
+            productCategory: true,
+            user : true,
+            media : true,
+            bids : true,
+            isBid : {
+                where: {
+                    userId: req.userId ? req.userId : 0,
+                },
+            },
+        };
     },
     chatRoom(req = {}) {
         return {

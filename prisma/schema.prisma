@@ -43,7 +43,95 @@ model User {
   ConversionSend      Conversion[]      @relation("senderConversion")
   ConversionReceive   Conversion[]      @relation("receiverConversion")
   Conversion          Conversion[]      @relation("recieverConversion")
+  products               Product[]
+  bids               ProductBid[] @relation("UserBidRelation")
 }
+
+
+
+
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  productCategoryId    Int?
+  title     String   @default("")
+  locationTitle     String   @default("")
+  description     String   @default("")
+  lat     Float    @default(0)
+  lng     Float   @default(0)
+  media          ProductMedia[]
+  videoEnable          Boolean           @default(false)
+  price          Float
+  status          ProductStatus @default(BidOpen)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  productCategory   ProductCategory? @relation("productCategory", fields: [productCategoryId], references: [id])
+  user           User?           @relation(fields: [userId], references: [id])
+  bids    ProductBid[]  @relation("ProductBidRelation")
+  isBid     ProductBid[]  @relation("isProductBid")
+}
+
+enum ProductStatus {
+  BidOpen
+  BidClose
+  Sold
+}
+
+model ProductBid {
+  id         Int      @id @default(autoincrement())
+  productId Int
+  userId     Int
+  product   Product @relation("ProductBidRelation", fields: [productId], references: [id])
+  user       User     @relation("UserBidRelation", fields: [userId], references: [id])
+  amount     Float
+  status     ProductBidStatus @default(Pending)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  bidProduct   Product @relation("isProductBid", fields: [productId], references: [id], map: "isProductBid_Foreign_Key_Constraint")
+}
+
+enum ProductBidStatus {
+  Pending
+  Accepted
+  Rejected
+}
+
+model ProductCategory {
+  id        Int       @id @default(autoincrement())
+  title     String    @default("")
+  parentId       Int?       @default(0)
+  parentCategory ProductCategory?  @relation("parentCategory", fields: [parentId], references: [id])
+  child          ProductCategory[] @relation("parentCategory")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  product   Product[] @relation("productCategory")
+}
+
+model ProductMedia {
+  id        Int      @id @default(autoincrement())
+   productId    Int
+   product       Product     @relation(fields: [productId], references: [id])
+  asset     String
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Service {
+  id        Int      @id @default(autoincrement())
+  userId    Int?     @unique
+  productCategoryId    Int?
+  description     String   @default("")
+  location     String   @default("")
+  image    Json
+  videoEnable          Boolean           @default(false)
+  price          Float
+  createdAt DateTime @default(now())
+}
+
+
 
 model Token {
   id        Int      @id @default(autoincrement())
@@ -68,8 +156,8 @@ model Country {
 
 model City {
   id        Int      @id @default(autoincrement())
-  countryId Int
-  country   Country  @relation(fields: [countryId], references: [id])
+  countryId Int?
+  country   Country? @relation(fields: [countryId], references: [id])
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -143,3 +231,8 @@ model Notification {
   updatedAt  DateTime @updatedAt
 }
 
+
+model clients {
+  id         Int      @id @unique @default(autoincrement())
+  type       String @map("type")
+}
