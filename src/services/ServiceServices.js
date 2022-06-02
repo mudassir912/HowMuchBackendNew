@@ -1,4 +1,5 @@
 const { prisma } = require("../database.js");
+const _ = require("lodash");
 require("dotenv").config();
 const {
   createError,
@@ -8,8 +9,9 @@ const {
 } = require("../utils/helperFunctions.js");
 const { relations } = require("../utils/relationsHelper.js");
 
-const ProductServices = {
-  async CreateProduct(req) {
+const ServiceServices = {
+
+  async CreateService(req) {
 
      media = req.data.media;
     delete  req.data.media;
@@ -17,23 +19,24 @@ const ProductServices = {
     const service = await prisma.service.create(req);
 
     if (service.id) {
-      await this.addProductMedia(service.id, media);
+      await this.addServiceMedia(service.id, media);
     }
-    return createResponse(service, true, "Product Created");
+    return createResponse(service, true, "Service Created");
   },
 
-  async UpdateProduct(data, where) {
-    const isProduct = await prisma.service.findUnique({ where });
+  async UpdateService(data, where) {
+    const isService = await prisma.service.findUnique({ where });
 
-    if (!isProduct) return createError(400, "Product not found!");
+    if (!isService) return createError(400, "Service not found!");
 
     const service = await prisma.service.update({
       where,
       data,
     });
 
-    return createResponse(service, true, "Product Updated");
+    return createResponse(service, true, "Service Updated");
   },
+
   async DeleteService(where) {
     const isService = await prisma.service.findUnique(where);
     if (!isService) return createError(400, "Service not found!");
@@ -54,6 +57,68 @@ const ProductServices = {
 
   async GetAllServices({ cursor, limit }, where, req = {}) {
 
+      whereFilter = {};
+
+      if(where.lat && where.lng){
+
+          //distance in KM
+        const Services = await prisma.$queryRaw`SELECT distance, id
+                                                FROM (SELECT id, lat, lng,
+       (ROUND(earth_distance(ll_to_earth(${where.lat}, ${where.lng}), ll_to_earth(lat, lng))::NUMERIC, 2))/1000 AS distance
+        FROM "Service") as x
+        where distance < 5 
+        `;
+
+        serviceIds = _.map(Services, 'id'); // → [1, 2]);
+
+          whereFilter.id = { in: serviceIds };
+      }
+
+      if(where.id){
+
+        whereFilter.id = where.id;
+      }
+
+      if(where.status){
+
+        whereFilter.status = where.status;
+      }
+
+      if(where.title){
+
+        whereFilter.title = {
+            contains: where.title,
+
+        };
+      }
+
+      if(where.description){
+
+        whereFilter.description = {
+            contains: where.description,
+
+        };
+      }
+
+      if(where.locationTitle){
+
+        whereFilter.locationTitle = {
+            contains: where.locationTitle,
+
+        };
+      }
+
+      if(where.serviceCategoryId){
+
+        whereFilter.serviceCategoryId = where.serviceCategoryId;
+      }
+
+      if(where.serviceCategoryId){
+
+        whereFilter.serviceCategoryId = where.serviceCategoryId;
+      }
+
+
 
 
  /*  const Raw = await prisma.$queryRaw`SELECT * FROM "City"`;
@@ -68,10 +133,10 @@ const ProductServices = {
     const service = await prisma.service.findMany({
       take: limit || 10,
       ...pagination,
-      where,
+      where : whereFilter,
       include: relations.service(req),
     });
-    console.log(req);
+
     if (!service || !service.length)
       return createError(400, "No Service not found!");
     return createResponse(

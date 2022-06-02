@@ -10,16 +10,50 @@ const relations = {
             child: true,
         };
     },
+    serviceCategory(req = {}) {
+        return {
+            service: true,
+            child: true,
+        };
+    },
     product(req = {}) {
         return {
             productCategory: true,
             user : true,
             media : true,
-            bids : true,
+            bids : {
+                include : {
+                    user : true
+                }
+            },
             isBid : {
                 where: {
                     userId: req.userId ? req.userId : 0,
                 },
+            include : {
+                user : true
+            }
+
+            },
+        };
+    },
+    service(req = {}) {
+        return {
+            serviceCategory: true,
+            user : true,
+            media : true,
+            bids : {
+                include : {
+                    user : true
+                }
+            },
+            isBid : {
+                where: {
+                    userId: req.userId ? req.userId : 0,
+                },
+                include : {
+                    user : true
+                }
             },
         };
     },
